@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portafolio de Prompts</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;--bg2:#f5f4f1;--bg3:#efefec;
+  --text:#1a1a18;--text2:#6b6b67;--text3:#9a9a96;
+  --border:rgba(0,0,0,0.12);--border2:rgba(0,0,0,0.22);
+  --radius:8px;--radius-lg:12px;
+  --green:#1D9E75;--amber:#EF9F27;--red:#E24B4A;
+  --purple-bg:#EEEDFE;--purple-text:#3C3489;
+  --teal-bg:#E1F5EE;--teal-text:#085041;
+  --amber-bg:#FAEEDA;--amber-text:#633806;
+  --coral-bg:#FAECE7;--coral-text:#712B13;
+  --blue-bg:#E6F1FB;--blue-text:#185FA5;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#1c1c1a;--bg2:#242422;--bg3:#2c2c2a;
+    --text:#f0ede8;--text2:#9a9997;--text3:#6b6967;
+    --border:rgba(255,255,255,0.1);--border2:rgba(255,255,255,0.2);
+    --purple-bg:#26215C;--purple-text:#CECBF6;
+    --teal-bg:#04342C;--teal-text:#9FE1CB;
+    --amber-bg:#412402;--amber-text:#FAC775;
+    --coral-bg:#4A1B0C;--coral-text:#F5C4B3;
+    --blue-bg:#042C53;--blue-text:#B5D4F4;
+  }
+}
+body{font-family:'Georgia',serif;background:var(--bg3);min-height:100vh;padding:2rem 1rem}
+.container{max-width:780px;margin:0 auto}
+h1{font-size:22px;font-weight:500;color:var(--text);margin-bottom:4px}
+.subtitle{font-size:13px;color:var(--text2);margin-bottom:1.5rem;font-family:monospace}
+.tabs{display:flex;gap:0;margin-bottom:1.5rem;background:var(--bg2);border-radius:var(--radius-lg);padding:4px}
+.tab{flex:1;padding:8px 4px;font-size:11px;cursor:pointer;border:none;background:none;color:var(--text2);border-radius:var(--radius);font-family:monospace;transition:all .15s;text-align:center}
+.tab.active{background:var(--bg);color:var(--text);font-weight:500;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.section{display:none}.section.active{display:block}
+label{font-size:12px;color:var(--text2);display:block;margin-bottom:4px;margin-top:14px;text-transform:uppercase;letter-spacing:.05em;font-family:monospace}
+input,textarea,select{width:100%;font-family:'Georgia',serif;font-size:14px;background:var(--bg);color:var(--text);border:.5px solid var(--border);border-radius:var(--radius);padding:8px 12px;outline:none;transition:border-color .15s}
+input:focus,textarea:focus,select:focus{border-color:var(--border2)}
+textarea{resize:vertical;min-height:80px;line-height:1.6}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.stars{display:flex;gap:4px;margin-top:6px}
+.star{font-size:22px;cursor:pointer;color:var(--border2);line-height:1;transition:color .1s}
+.star.on{color:var(--amber)}
+.btn-primary{margin-top:18px;width:100%;padding:11px;font-size:14px;font-weight:500;background:var(--text);color:var(--bg);border:none;border-radius:var(--radius);cursor:pointer;font-family:'Georgia',serif;letter-spacing:.02em;transition:opacity .15s}
+.btn-primary:hover{opacity:.82}
+.btn-small{font-size:11px;padding:4px 10px;border:.5px solid var(--border2);background:none;color:var(--text2);border-radius:var(--radius);cursor:pointer;font-family:monospace;transition:background .1s}
+.btn-small:hover{background:var(--bg2)}
+.btn-danger{color:var(--red);border-color:var(--red)}
+.btn-compare{color:var(--blue-text);border-color:var(--blue-text)}
+.btn-compare.selected{background:var(--blue-bg)}
+.card{background:var(--bg);border:.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem 1.25rem;margin-bottom:12px}
+.card-header{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.card-title{font-size:15px;font-weight:500;color:var(--text)}
+.card-meta{font-size:12px;color:var(--text2);margin-top:4px;font-family:monospace}
+.badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:var(--radius);margin-right:4px;font-family:monospace}
+.badge-purple{background:var(--purple-bg);color:var(--purple-text)}
+.badge-teal{background:var(--teal-bg);color:var(--teal-text)}
+.badge-amber{background:var(--amber-bg);color:var(--amber-text)}
+.badge-coral{background:var(--coral-bg);color:var(--coral-text)}
+.badge-blue{background:var(--blue-bg);color:var(--blue-text)}
+.badge-green{background:#E1F5EE;color:#085041}
+.preview{font-size:13px;color:var(--text2);margin-top:8px;line-height:1.6;border-left:2px solid var(--border2);padding-left:10px;white-space:pre-wrap;font-family:monospace}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.5rem}
+.metric{background:var(--bg2);border-radius:var(--radius);padding:12px;text-align:center}
+.metric-val{font-size:22px;font-weight:500;color:var(--text)}
+.metric-lbl{font-size:10px;color:var(--text2);margin-top:2px;font-family:monospace;text-transform:uppercase;letter-spacing:.04em}
+.empty{text-align:center;padding:2.5rem;color:var(--text2);font-size:14px}
+.filter-bar{display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap}
+.filter-chip{font-size:11px;padding:4px 12px;border:.5px solid var(--border2);background:none;color:var(--text2);border-radius:20px;cursor:pointer;font-family:monospace;transition:all .1s}
+.filter-chip.active{background:var(--text);color:var(--bg);border-color:var(--text)}
+.search{margin-bottom:12px}
+.tag-list{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+.insight-bar{height:6px;border-radius:3px;background:var(--bg2);margin-top:6px;overflow:hidden}
+.insight-fill{height:100%;border-radius:3px}
+.msg-save{text-align:center;font-size:13px;margin-top:8px;min-height:20px;font-family:monospace}
+.export-btn{margin-top:12px;width:100%;padding:10px;font-size:13px;background:none;border:.5px solid var(--border2);color:var(--text2);border-radius:var(--radius);cursor:pointer;font-family:monospace;transition:background .1s}
+.export-btn:hover{background:var(--bg2)}
+/* Comparar */
+.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+.compare-col{background:var(--bg);border:.5px solid var(--border);border-radius:var(--radius-lg);padding:1rem}
+.compare-col.winner{border-color:var(--green)}
+.compare-label{font-size:11px;font-family:monospace;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.compare-field{margin-bottom:12px}
+.compare-field-label{font-size:11px;color:var(--text3);font-family:monospace;margin-bottom:3px;text-transform:uppercase}
+.compare-field-val{font-size:13px;color:var(--text);line-height:1.5;font-family:monospace;white-space:pre-wrap}
+.compare-score{font-size:22px;font-weight:500}
+.winner-badge{display:inline-block;background:var(--teal-bg);color:var(--teal-text);font-size:11px;padding:2px 8px;border-radius:var(--radius);font-family:monospace;margin-left:6px}
+.compare-hint{background:var(--bg2);border-radius:var(--radius-lg);padding:14px 16px;font-size:13px;color:var(--text2);font-family:monospace}
+.diff-highlight{background:var(--amber-bg);color:var(--amber-text);border-radius:2px;padding:0 2px}
+/* Asistente */
+.ai-box{background:var(--bg);border:.5px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem;margin-bottom:16px}
+.ai-quick-btns{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.ai-quick-btn{font-size:12px;padding:6px 14px;border:.5px solid var(--border2);background:none;color:var(--text2);border-radius:20px;cursor:pointer;font-family:monospace;transition:all .15s}
+.ai-quick-btn:hover{background:var(--bg2);color:var(--text)}
+.ai-history{max-height:480px;overflow-y:auto;display:flex;flex-direction:column;gap:12px;margin-bottom:12px}
+.ai-msg{padding:10px 14px;border-radius:var(--radius);font-size:14px;line-height:1.7}
+.ai-msg.user{background:var(--bg3);font-family:monospace;font-size:13px;color:var(--text2);align-self:flex-end;max-width:85%}
+.ai-msg.assistant{background:var(--bg2);font-family:'Georgia',serif;color:var(--text)}
+.ai-msg.loading{color:var(--text3);font-style:italic;font-family:monospace;font-size:13px}
+.ai-prompt-row{display:flex;gap:8px;margin-top:12px}
+.ai-prompt-row input{flex:1}
+.ai-send-btn{padding:8px 18px;font-size:13px;font-weight:500;background:var(--text);color:var(--bg);border:none;border-radius:var(--radius);cursor:pointer;font-family:monospace;white-space:nowrap;transition:opacity .15s;flex-shrink:0}
+.ai-send-btn:hover{opacity:.82}
+.ai-send-btn:disabled{opacity:.4;cursor:default}
+.api-key-box{background:var(--amber-bg);border:.5px solid var(--amber-text);border-radius:var(--radius);padding:12px 16px;margin-bottom:16px;font-size:13px;color:var(--amber-text);font-family:monospace}
+.api-key-row{display:flex;gap:8px;margin-top:10px}
+.api-key-row input{flex:1;font-family:monospace;font-size:13px}
+/* Airtable */
+.at-status{display:flex;align-items:center;gap:8px;font-size:12px;font-family:monospace;padding:10px 14px;border-radius:var(--radius);margin-bottom:14px}
+.at-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.at-dot.green{background:var(--green)}
+.at-dot.red{background:var(--red)}
+.at-dot.amber{background:var(--amber)}
+.at-config-box{background:var(--bg2);border:.5px solid var(--border2);border-radius:var(--radius-lg);padding:1rem 1.25rem;margin-bottom:1rem}
+.sync-row{display:flex;gap:8px;margin-top:14px}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Portafolio de Prompts</h1>
+  <div class="subtitle">// mejora continua · resultados estables</div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('nueva')">+ Nueva</button>
+    <button class="tab" onclick="showTab('portafolio')">Portafolio</button>
+    <button class="tab" onclick="showTab('comparar')">Comparar</button>
+    <button class="tab" onclick="showTab('insights')">Insights</button>
+    <button class="tab" onclick="showTab('asistente')">Asistente IA</button>
+    <button class="tab" onclick="showTab('config')">Config</button>
+  </div>
+
+  <!-- NUEVA -->
+  <div id="tab-nueva" class="section active">
+    <label>Título / descripción corta</label>
+    <input type="text" id="titulo" placeholder="Ej: Prompt para generar objetivos de aprendizaje">
+    <div class="row3">
+      <div>
+        <label>Categoría</label>
+        <select id="categoria">
+          <option value="contenido">Contenido educativo</option>
+          <option value="evaluacion">Evaluación / preguntas</option>
+          <option value="estructura">Estructura de módulos</option>
+          <option value="narrativa">Narrativa / storytelling</option>
+          <option value="codigo">Código / técnico</option>
+          <option value="otro">Otro</option>
+        </select>
+      </div>
+      <div>
+        <label>Técnica de prompting</label>
+        <select id="tecnica">
+          <option value="zero-shot">Zero-shot</option>
+          <option value="few-shot">Few-shot</option>
+          <option value="chain-of-thought">Chain-of-thought</option>
+          <option value="role-prompting">Role prompting</option>
+          <option value="template">Template / plantilla</option>
+          <option value="iterativo">Iterativo / refinado</option>
+        </select>
+      </div>
+      <div>
+        <label>Modelo usado</label>
+        <select id="modelo">
+          <option value="claude-sonnet-4">Claude Sonnet 4</option>
+          <option value="claude-opus-4">Claude Opus 4</option>
+          <option value="claude-haiku-4">Claude Haiku 4</option>
+          <option value="claude-sonnet-3-7">Claude Sonnet 3.7</option>
+          <option value="claude-sonnet-3-5">Claude Sonnet 3.5</option>
+          <option value="gpt-4o">GPT-4o</option>
+          <option value="gpt-4-turbo">GPT-4 Turbo</option>
+          <option value="gemini-1-5-pro">Gemini 1.5 Pro</option>
+          <option value="otro-modelo">Otro</option>
+        </select>
+      </div>
+    </div>
+    <label>El prompt</label>
+    <textarea id="prompt" placeholder="Escribe o pega tu prompt aquí..."></textarea>
+    <label>Output obtenido (resumen o fragmento)</label>
+    <textarea id="output" placeholder="Pega el resultado que obtuvo el modelo..."></textarea>
+    <div class="row2">
+      <div>
+        <label>Calidad del output</label>
+        <div class="stars" id="stars-calidad">
+          <span class="star" onclick="setStar('calidad',1)">★</span><span class="star" onclick="setStar('calidad',2)">★</span>
+          <span class="star" onclick="setStar('calidad',3)">★</span><span class="star" onclick="setStar('calidad',4)">★</span>
+          <span class="star" onclick="setStar('calidad',5)">★</span>
+        </div>
+      </div>
+      <div>
+        <label>Especificidad del prompt</label>
+        <div class="stars" id="stars-especificidad">
+          <span class="star" onclick="setStar('especificidad',1)">★</span><span class="star" onclick="setStar('especificidad',2)">★</span>
+          <span class="star" onclick="setStar('especificidad',3)">★</span><span class="star" onclick="setStar('especificidad',4)">★</span>
+          <span class="star" onclick="setStar('especificidad',5)">★</span>
+        </div>
+      </div>
+    </div>
+    <label>¿Qué funcionó? / ¿Qué mejorarías?</label>
+    <textarea id="notas" style="min-height:60px" placeholder="Reflexión personal sobre este prompt..."></textarea>
+    <label>Tags (separados por coma)</label>
+    <input type="text" id="tags" placeholder="Ej: objetivos, bloom, módulo-1">
+    <button class="btn-primary" onclick="guardar()">Guardar en portafolio</button>
+    <div class="msg-save" id="msg-save"></div>
+  </div>
+
+  <!-- PORTAFOLIO -->
+  <div id="tab-portafolio" class="section">
+    <div class="metrics" id="metrics-box"></div>
+    <input class="search" type="text" placeholder="Buscar por título, prompt o tag..." oninput="renderPortfolio(this.value)">
+    <div class="filter-bar" id="filter-bar"></div>
+    <div id="lista-prompts"></div>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="export-btn" onclick="exportCSV()" style="margin-top:0">↓ Exportar CSV</button>
+      <button class="export-btn" onclick="syncFromAirtable()" style="margin-top:0;color:var(--blue-text);border-color:var(--blue-text)">↻ Sincronizar desde Airtable</button>
+    </div>
+  </div>
+
+  <!-- COMPARAR -->
+  <div id="tab-comparar" class="section">
+    <div class="compare-hint" id="compare-hint">Selecciona dos prompts desde el Portafolio con "+ Cmp", o elige aquí abajo.</div>
+    <div id="compare-sel-info" style="display:none;margin-top:10px">
+      <div style="display:flex;gap:8px;align-items:center;font-family:monospace;font-size:13px;margin-bottom:10px">
+        <span id="sel-count" style="color:var(--text2)"></span>
+        <button class="btn-small" onclick="clearSelection()">Limpiar</button>
+      </div>
+    </div>
+    <div id="compare-result"></div>
+    <div id="compare-list" style="margin-top:16px"></div>
+  </div>
+
+  <!-- INSIGHTS -->
+  <div id="tab-insights" class="section">
+    <div id="insights-content"></div>
+  </div>
+
+  <!-- ASISTENTE IA -->
+  <div id="tab-asistente" class="section">
+    <div class="ai-box">
+      <div id="api-key-section">
+        <div class="api-key-box">
+          Para usar el asistente necesitas una API key de Anthropic. Obtenla en console.anthropic.com → API Keys. Se guarda solo en este navegador y nunca sale de tu dispositivo.
+          <div class="api-key-row">
+            <input type="password" id="api-key-input" placeholder="sk-ant-...">
+            <button class="ai-send-btn" onclick="saveApiKey()">Guardar</button>
+          </div>
+        </div>
+      </div>
+      <div id="asistente-ui" style="display:none">
+        <div class="ai-quick-btns">
+          <button class="ai-quick-btn" onclick="askQuick('analiza')">Analizar mis patrones</button>
+          <button class="ai-quick-btn" onclick="askQuick('mejor-tecnica')">¿Qué técnica me funciona mejor?</button>
+          <button class="ai-quick-btn" onclick="askQuick('siguiente')">Sugerirme el siguiente prompt</button>
+          <button class="ai-quick-btn" onclick="askQuick('debilidades')">¿Cuáles son mis debilidades?</button>
+          <button class="ai-quick-btn" onclick="askQuick('modelo')">¿Qué modelo me da mejores resultados?</button>
+        </div>
+        <div class="ai-history" id="ai-history"></div>
+        <div class="ai-prompt-row">
+          <input type="text" id="ai-input" placeholder="Pregunta algo sobre tus prompts..." onkeydown="if(event.key==='Enter')sendAI()">
+          <button class="ai-send-btn" id="ai-send-btn" onclick="sendAI()">Enviar</button>
+        </div>
+        <div style="margin-top:8px;display:flex;justify-content:flex-end">
+          <button class="btn-small" onclick="clearApiKey()">Cambiar API key</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONFIG -->
+  <div id="tab-config" class="section">
+    <div class="at-config-box">
+      <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:4px">Conexión con Airtable</div>
+      <div style="font-size:12px;color:var(--text2);font-family:monospace;margin-bottom:14px">Los prompts se guardan localmente y se sincronizan con tu base de Airtable automáticamente.</div>
+
+      <div id="at-status-bar"></div>
+
+      <label>API Key de Airtable</label>
+      <input type="password" id="at-key-input" placeholder="patXXXXXXXXXXXXXX...">
+
+      <label>Base ID</label>
+      <input type="text" id="at-base-input" placeholder="appXXXXXXXXXXXXXX" value="app9P3B4UCWr8qjzE">
+
+      <label>Nombre de la tabla</label>
+      <input type="text" id="at-table-input" placeholder="Table 1" value="Table 1">
+
+      <div class="sync-row">
+        <button class="btn-primary" style="margin-top:0;flex:1" onclick="saveAirtableConfig()">Guardar configuración</button>
+        <button class="export-btn" style="margin-top:0;flex:1" onclick="testAirtable()">Probar conexión</button>
+      </div>
+      <div class="msg-save" id="msg-at-config"></div>
+    </div>
+
+    <div class="at-config-box" style="margin-top:0">
+      <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:8px">Estructura de columnas en Airtable</div>
+      <div style="font-size:12px;color:var(--text2);font-family:monospace;line-height:2">
+        El portafolio crea automáticamente estos campos en tu tabla:<br>
+        <span class="badge badge-purple">Titulo</span>
+        <span class="badge badge-teal">Fecha</span>
+        <span class="badge badge-amber">Categoria</span>
+        <span class="badge badge-coral">Tecnica</span>
+        <span class="badge badge-blue">Modelo</span>
+        <span class="badge badge-purple">Prompt</span>
+        <span class="badge badge-teal">Output</span>
+        <span class="badge badge-amber">Calidad</span>
+        <span class="badge badge-coral">Especificidad</span>
+        <span class="badge badge-blue">Notas</span>
+        <span class="badge badge-purple">Tags</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY='prompt_portfolio_v1';
+const API_KEY_STORAGE='pf_anthropic_key';
+const AT_KEY_STORAGE='pf_at_key';
+const AT_BASE_STORAGE='pf_at_base';
+const AT_TABLE_STORAGE='pf_at_table';
+
+let ratings={calidad:0,especificidad:0};
+let activeFilter='todos';
+let expandedCards=new Set();
+let compareSelection=[];
+let aiMessages=[];
+
+const modelNames={'claude-sonnet-4':'Claude Sonnet 4','claude-opus-4':'Claude Opus 4','claude-haiku-4':'Claude Haiku 4','claude-sonnet-3-7':'Claude Sonnet 3.7','claude-sonnet-3-5':'Claude Sonnet 3.5','gpt-4o':'GPT-4o','gpt-4-turbo':'GPT-4 Turbo','gemini-1-5-pro':'Gemini 1.5 Pro','otro-modelo':'Otro'};
+const catColors={contenido:'purple',evaluacion:'teal',estructura:'amber',narrativa:'coral',codigo:'teal',otro:'purple'};
+const tecNames={'zero-shot':'Zero-shot','few-shot':'Few-shot','chain-of-thought':'Chain-of-thought','role-prompting':'Role prompting','template':'Template','iterativo':'Iterativo'};
+
+function loadData(){try{return JSON.parse(localStorage.getItem(STORAGE_KEY)||'[]');}catch{return[];}}
+function saveData(d){localStorage.setItem(STORAGE_KEY,JSON.stringify(d));}
+function getAT(){return{key:localStorage.getItem(AT_KEY_STORAGE),base:localStorage.getItem(AT_BASE_STORAGE)||'app9P3B4UCWr8qjzE',table:localStorage.getItem(AT_TABLE_STORAGE)||'Table 1'};}
+
+function setStar(tipo,val){
+  ratings[tipo]=val;
+  document.getElementById('stars-'+tipo).querySelectorAll('.star').forEach((s,i)=>s.classList.toggle('on',i<val));
+}
+
+function showTab(name){
+  const names=['nueva','portafolio','comparar','insights','asistente','config'];
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',names[i]===name));
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  if(name==='portafolio')renderPortfolio();
+  if(name==='comparar')renderCompareTab();
+  if(name==='insights')renderInsights();
+  if(name==='asistente')initAsistente();
+  if(name==='config')initConfig();
+}
+
+// ── GUARDAR ───────────────────────────────────────────────
+async function guardar(){
+  const titulo=document.getElementById('titulo').value.trim();
+  const prompt=document.getElementById('prompt').value.trim();
+  const msg=document.getElementById('msg-save');
+  if(!titulo||!prompt){msg.style.color='var(--red)';msg.textContent='Título y prompt son requeridos.';return;}
+
+  const entry={
+    id:Date.now(),
+    fecha:new Date().toLocaleDateString('es-ES',{day:'2-digit',month:'short',year:'numeric'}),
+    titulo,categoria:document.getElementById('categoria').value,
+    tecnica:document.getElementById('tecnica').value,
+    modelo:document.getElementById('modelo').value,
+    prompt,output:document.getElementById('output').value.trim(),
+    calidad:ratings.calidad,especificidad:ratings.especificidad,
+    notas:document.getElementById('notas').value.trim(),
+    tags:document.getElementById('tags').value.split(',').map(t=>t.trim()).filter(Boolean)
+  };
+
+  const data=loadData();
+  data.unshift(entry);
+  saveData(data);
+
+  msg.style.color='var(--text2)';msg.textContent='Guardando...';
+
+  const atResult=await pushToAirtable(entry);
+  if(atResult===true){
+    msg.style.color='var(--green)';msg.textContent='✓ Guardado localmente y en Airtable';
+  } else if(atResult==='no-key'){
+    msg.style.color='var(--green)';msg.textContent='✓ Guardado localmente (configura Airtable en Config para sincronizar)';
+  } else {
+    msg.style.color='var(--amber)';msg.textContent='✓ Guardado localmente — Error Airtable: '+atResult;
+  }
+  setTimeout(()=>msg.textContent='',4000);
+  ['titulo','prompt','output','notas','tags'].forEach(id=>document.getElementById(id).value='');
+  ratings={calidad:0,especificidad:0};
+  ['calidad','especificidad'].forEach(t=>document.getElementById('stars-'+t).querySelectorAll('.star').forEach(s=>s.classList.remove('on')));
+}
+
+// ── AIRTABLE API ──────────────────────────────────────────
+async function pushToAirtable(entry){
+  const {key,base,table}=getAT();
+  if(!key)return'no-key';
+  try{
+    const res=await fetch(`https://api.airtable.com/v0/${base}/${encodeURIComponent(table)}`,{
+      method:'POST',
+      headers:{'Authorization':'Bearer '+key,'Content-Type':'application/json'},
+      body:JSON.stringify({fields:{
+        'Titulo':entry.titulo,
+        'Fecha':entry.fecha,
+        'Categoria':entry.categoria,
+        'Tecnica':tecNames[entry.tecnica]||entry.tecnica,
+        'Modelo':modelNames[entry.modelo]||entry.modelo||'',
+        'Prompt':entry.prompt,
+        'Output':entry.output||'',
+        'Calidad':entry.calidad||0,
+        'Especificidad':entry.especificidad||0,
+        'Notas':entry.notas||'',
+        'Tags':(entry.tags||[]).join(', ')
+      }})
+    });
+    const data=await res.json();
+    if(data.error)return data.error.message||'Error desconocido';
+    return true;
+  }catch(e){return e.message;}
+}
+
+async function syncFromAirtable(){
+  const {key,base,table}=getAT();
+  if(!key){alert('Primero configura tu API key de Airtable en la pestaña Config.');return;}
+  const btn=document.querySelector('.export-btn[onclick="syncFromAirtable()"]');
+  if(btn){btn.textContent='↻ Sincronizando...';btn.disabled=true;}
+  try{
+    let records=[];let offset=null;
+    do{
+      const url=`https://api.airtable.com/v0/${base}/${encodeURIComponent(table)}?pageSize=100${offset?'&offset='+offset:''}`;
+      const res=await fetch(url,{headers:{'Authorization':'Bearer '+key}});
+      const data=await res.json();
+      if(data.error)throw new Error(data.error.message);
+      records=[...records,...(data.records||[])];
+      offset=data.offset;
+    }while(offset);
+
+    const mapped=records.map(r=>({
+      id:r.id,
+      fecha:r.fields['Fecha']||'',
+      titulo:r.fields['Titulo']||'Sin título',
+      categoria:r.fields['Categoria']||'otro',
+      tecnica:Object.keys(tecNames).find(k=>tecNames[k]===r.fields['Tecnica'])||r.fields['Tecnica']||'zero-shot',
+      modelo:Object.keys(modelNames).find(k=>modelNames[k]===r.fields['Modelo'])||r.fields['Modelo']||'',
+      prompt:r.fields['Prompt']||'',
+      output:r.fields['Output']||'',
+      calidad:r.fields['Calidad']||0,
+      especificidad:r.fields['Especificidad']||0,
+      notas:r.fields['Notas']||'',
+      tags:(r.fields['Tags']||'').split(',').map(t=>t.trim()).filter(Boolean)
+    }));
+
+    saveData(mapped);
+    renderPortfolio();
+    alert(`✓ Sincronizado: ${mapped.length} prompts cargados desde Airtable.`);
+  }catch(e){
+    alert('Error al sincronizar: '+e.message);
+  }finally{
+    if(btn){btn.textContent='↻ Sincronizar desde Airtable';btn.disabled=false;}
+  }
+}
+
+async function testAirtable(){
+  const key=document.getElementById('at-key-input').value.trim()||localStorage.getItem(AT_KEY_STORAGE);
+  const base=document.getElementById('at-base-input').value.trim()||'app9P3B4UCWr8qjzE';
+  const table=document.getElementById('at-table-input').value.trim()||'Table 1';
+  const msg=document.getElementById('msg-at-config');
+  msg.style.color='var(--text2)';msg.textContent='Probando conexión...';
+  try{
+    const res=await fetch(`https://api.airtable.com/v0/${base}/${encodeURIComponent(table)}?maxRecords=1`,{
+      headers:{'Authorization':'Bearer '+key}
+    });
+    const data=await res.json();
+    if(data.error){msg.style.color='var(--red)';msg.textContent='Error: '+data.error.message;}
+    else{msg.style.color='var(--green)';msg.textContent='✓ Conexión exitosa con Airtable';}
+  }catch(e){msg.style.color='var(--red)';msg.textContent='Error: '+e.message;}
+  renderATStatus();
+}
+
+function saveAirtableConfig(){
+  const key=document.getElementById('at-key-input').value.trim();
+  const base=document.getElementById('at-base-input').value.trim();
+  const table=document.getElementById('at-table-input').value.trim();
+  if(key)localStorage.setItem(AT_KEY_STORAGE,key);
+  if(base)localStorage.setItem(AT_BASE_STORAGE,base);
+  if(table)localStorage.setItem(AT_TABLE_STORAGE,table);
+  const msg=document.getElementById('msg-at-config');
+  msg.style.color='var(--green)';msg.textContent='✓ Configuración guardada';
+  setTimeout(()=>msg.textContent='',2500);
+  renderATStatus();
+}
+
+function renderATStatus(){
+  const {key,base,table}=getAT();
+  const bar=document.getElementById('at-status-bar');
+  if(!bar)return;
+  if(key){
+    bar.innerHTML=`<div class="at-status" style="background:var(--teal-bg)"><div class="at-dot green"></div><span style="color:var(--teal-text)">Airtable conectado · Base: ${base} · Tabla: ${table}</span></div>`;
+  }else{
+    bar.innerHTML=`<div class="at-status" style="background:var(--amber-bg)"><div class="at-dot amber"></div><span style="color:var(--amber-text)">Sin API key — ingresa tu key para activar la sincronización</span></div>`;
+  }
+}
+
+function initConfig(){
+  const {key,base,table}=getAT();
+  if(key)document.getElementById('at-key-input').value=key;
+  document.getElementById('at-base-input').value=base;
+  document.getElementById('at-table-input').value=table;
+  renderATStatus();
+}
+
+// ── PORTAFOLIO ────────────────────────────────────────────
+function renderPortfolio(query=''){
+  const data=loadData();
+  const avg=arr=>arr.length?(arr.reduce((a,b)=>a+b,0)/arr.length).toFixed(1):'–';
+  const models=new Set(data.map(d=>d.modelo).filter(Boolean));
+  document.getElementById('metrics-box').innerHTML=`
+    <div class="metric"><div class="metric-val">${data.length}</div><div class="metric-lbl">Prompts</div></div>
+    <div class="metric"><div class="metric-val">${avg(data.map(d=>d.calidad).filter(Boolean))}</div><div class="metric-lbl">Calidad prom.</div></div>
+    <div class="metric"><div class="metric-val">${avg(data.map(d=>d.especificidad).filter(Boolean))}</div><div class="metric-lbl">Especificidad</div></div>
+    <div class="metric"><div class="metric-val">${models.size}</div><div class="metric-lbl">Modelos</div></div>`;
+  const cats=['todos',...new Set(data.map(d=>d.categoria))];
+  document.getElementById('filter-bar').innerHTML=cats.map(c=>`<button class="filter-chip ${activeFilter===c?'active':''}" onclick="setFilter('${c}')">${c==='todos'?'Todos':c}</button>`).join('');
+  let filtered=data;
+  if(activeFilter!=='todos')filtered=filtered.filter(d=>d.categoria===activeFilter);
+  if(query){const q=query.toLowerCase();filtered=filtered.filter(d=>d.titulo.toLowerCase().includes(q)||d.prompt.toLowerCase().includes(q)||(d.tags||[]).some(t=>t.toLowerCase().includes(q)));}
+  const lista=document.getElementById('lista-prompts');
+  if(!filtered.length){lista.innerHTML=`<div class="empty">No hay entradas aún.</div>`;return;}
+  const stars=n=>n?'★'.repeat(n)+'☆'.repeat(5-n):'–';
+  lista.innerHTML=filtered.map(e=>{
+    const col=catColors[e.categoria]||'purple';
+    const isExp=expandedCards.has(e.id);
+    const isSel=compareSelection.includes(e.id);
+    const pp=isExp?e.prompt:e.prompt.slice(0,140)+(e.prompt.length>140?'…':'');
+    const op=e.output?(isExp?e.output:e.output.slice(0,120)+(e.output.length>120?'…':'')):'';
+    const ml=modelNames[e.modelo]||e.modelo||'';
+    return `<div class="card" style="${isSel?'border-color:var(--blue-text);':''}">
+      <div class="card-header">
+        <div>
+          <div class="card-title">${e.titulo}</div>
+          <div class="card-meta">${e.fecha} · <span class="badge badge-${col}">${e.categoria}</span><span class="badge badge-teal">${tecNames[e.tecnica]||e.tecnica}</span>${ml?`<span class="badge badge-blue">${ml}</span>`:''}</div>
+        </div>
+        <div style="display:flex;gap:5px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end">
+          <button class="btn-small btn-compare ${isSel?'selected':''}" onclick="toggleCompare(${typeof e.id==='number'?e.id:'"'+e.id+'"'})">${isSel?'✓':'+ Cmp'}</button>
+          <button class="btn-small" onclick="toggleExpand(${typeof e.id==='number'?e.id:'"'+e.id+'"'})">${isExp?'▲':'▼'}</button>
+          <button class="btn-small btn-danger" onclick="eliminar(${typeof e.id==='number'?e.id:'"'+e.id+'"'})">✕</button>
+        </div>
+      </div>
+      <div class="preview">${pp}</div>
+      ${isExp&&op?`<div style="margin-top:8px"><span style="font-size:11px;color:var(--text2);font-family:monospace">OUTPUT:</span><div class="preview" style="border-left-color:var(--green)">${op}</div></div>`:''}
+      ${isExp?`<div style="margin-top:10px;font-size:13px;font-family:monospace">
+        <span style="color:var(--text2)">Calidad:</span> <span style="color:var(--amber)">${stars(e.calidad)}</span>
+        &nbsp;<span style="color:var(--text2)">Especificidad:</span> <span style="color:var(--amber)">${stars(e.especificidad)}</span>
+        ${e.notas?`<div style="margin-top:6px;color:var(--text2)">Nota: ${e.notas}</div>`:''}
+        ${(e.tags||[]).length?`<div class="tag-list">${e.tags.map(t=>`<span class="badge badge-purple">#${t}</span>`).join('')}</div>`:''}
+      </div>`:''}
+    </div>`;
+  }).join('');
+}
+
+function toggleExpand(id){expandedCards.has(id)?expandedCards.delete(id):expandedCards.add(id);renderPortfolio(document.querySelector('.search')?.value||'');}
+function eliminar(id){saveData(loadData().filter(d=>d.id!==id));expandedCards.delete(id);compareSelection=compareSelection.filter(x=>x!==id);renderPortfolio(document.querySelector('.search')?.value||'');}
+function setFilter(cat){activeFilter=cat;renderPortfolio();}
+
+// ── COMPARAR ──────────────────────────────────────────────
+function toggleCompare(id){
+  if(compareSelection.includes(id)){compareSelection=compareSelection.filter(x=>x!==id);}
+  else{if(compareSelection.length>=2){alert('Solo puedes seleccionar 2. Limpia la selección primero.');return;}compareSelection.push(id);}
+  renderPortfolio(document.querySelector('.search')?.value||'');
+  if(compareSelection.length===2)showTab('comparar');
+}
+function clearSelection(){compareSelection=[];renderCompareTab();renderPortfolio(document.querySelector('.search')?.value||'');}
+
+function renderCompareTab(){
+  const hint=document.getElementById('compare-hint');
+  const selInfo=document.getElementById('compare-sel-info');
+  const result=document.getElementById('compare-result');
+  const list=document.getElementById('compare-list');
+  if(compareSelection.length===0){hint.style.display='block';selInfo.style.display='none';result.innerHTML='';renderMiniList(list);return;}
+  hint.style.display='none';selInfo.style.display='block';
+  document.getElementById('sel-count').textContent=`${compareSelection.length}/2 seleccionados`;
+  if(compareSelection.length===2){renderComparison(result);list.innerHTML='';}
+  else{result.innerHTML='';renderMiniList(list);}
+}
+
+function renderMiniList(container){
+  const data=loadData();
+  if(!data.length){container.innerHTML=`<div class="empty">No hay prompts guardados.</div>`;return;}
+  container.innerHTML=`<div style="font-size:12px;color:var(--text2);font-family:monospace;margin-bottom:10px">Elige dos prompts para comparar:</div>`+
+    data.map(e=>{
+      const isSel=compareSelection.includes(e.id);
+      const ml=modelNames[e.modelo]||e.modelo||'';
+      return `<div class="card" style="cursor:pointer;${isSel?'border-color:var(--blue-text);':''}" onclick="toggleCompare(${typeof e.id==='number'?e.id:'"'+e.id+'"'})">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><div style="font-size:14px;font-weight:500;color:var(--text)">${e.titulo}</div>
+          <div style="font-size:12px;color:var(--text2);font-family:monospace;margin-top:3px">${e.fecha} · ${tecNames[e.tecnica]||e.tecnica} · ${ml}</div></div>
+          <div style="font-size:12px;font-family:monospace;color:${isSel?'var(--blue-text)':'var(--text3)'};flex-shrink:0;margin-left:8px">${isSel?'✓ seleccionado':'+ seleccionar'}</div>
+        </div>
+      </div>`;
+    }).join('');
+}
+
+function diffWords(tA,tB){
+  const sB=new Set(tB.split(/\s+/).map(w=>w.toLowerCase().replace(/[^a-záéíóúñ0-9]/g,'')));
+  return tA.split(/\s+/).map(w=>{const c=w.toLowerCase().replace(/[^a-záéíóúñ0-9]/g,'');return sB.has(c)?w:`<span class="diff-highlight">${w}</span>`;}).join(' ');
+}
+
+function renderComparison(container){
+  const data=loadData();
+  const [a,b]=compareSelection.map(id=>data.find(d=>d.id===id)).filter(Boolean);
+  if(!a||!b){container.innerHTML='';return;}
+  const stars=n=>n?'★'.repeat(n)+'☆'.repeat(5-n):'–';
+  const sA=(a.calidad||0)+(a.especificidad||0),sB=(b.calidad||0)+(b.especificidad||0);
+  const wA=sA>sB,wB=sB>sA,tie=sA===sB;
+  const winTag=`<span class="winner-badge">mejor score</span>`;
+  const tieTag=`<span class="winner-badge" style="background:var(--amber-bg);color:var(--amber-text)">empate</span>`;
+  const col=(entry,other,winner,score)=>`
+    <div class="compare-col ${winner?'winner':''}">
+      <div class="compare-label">${entry===a?'Prompt A':'Prompt B'} ${winner?winTag:tie?tieTag:''}</div>
+      <div class="compare-field"><div class="compare-field-label">Título</div><div class="compare-field-val" style="font-family:Georgia,serif;font-weight:500">${entry.titulo}</div></div>
+      <div class="compare-field"><div class="compare-field-label">Modelo</div><div class="compare-field-val"><span class="badge badge-blue">${modelNames[entry.modelo]||entry.modelo||'–'}</span></div></div>
+      <div class="compare-field"><div class="compare-field-label">Técnica</div><div class="compare-field-val"><span class="badge badge-teal">${tecNames[entry.tecnica]||entry.tecnica}</span></div></div>
+      <div class="compare-field"><div class="compare-field-label">Prompt <span style="color:var(--amber-text);font-size:10px">(amarillo=único)</span></div><div class="compare-field-val">${diffWords(entry.prompt,other.prompt)}</div></div>
+      ${entry.output?`<div class="compare-field"><div class="compare-field-label">Output</div><div class="compare-field-val">${entry.output.slice(0,200)}${entry.output.length>200?'…':''}</div></div>`:''}
+      <div class="compare-field"><div class="compare-field-label">Calidad / Especificidad</div><div class="compare-field-val" style="color:var(--amber)">${stars(entry.calidad)} / ${stars(entry.especificidad)}</div></div>
+      <div class="compare-field"><div class="compare-field-label">Score total</div><div class="compare-score" style="color:${winner?'var(--green)':'var(--text2)'}">${score}/10</div></div>
+      ${entry.notas?`<div class="compare-field"><div class="compare-field-label">Nota</div><div class="compare-field-val" style="color:var(--text2)">${entry.notas}</div></div>`:''}
+    </div>`;
+  container.innerHTML=`
+    <div style="margin-bottom:12px">
+      <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:4px">Comparación lado a lado</div>
+      <div style="font-size:12px;color:var(--text2);font-family:monospace">Palabras <span class="diff-highlight">destacadas</span> son exclusivas de ese prompt.</div>
+    </div>
+    <div class="compare-grid">${col(a,b,wA,sA)}${col(b,a,wB,sB)}</div>
+    <button class="export-btn" style="margin-top:16px" onclick="clearSelection()">← Nueva comparación</button>`;
+}
+
+// ── EXPORT CSV ────────────────────────────────────────────
+function exportCSV(){
+  const data=loadData();if(!data.length)return;
+  const headers=['fecha','titulo','categoria','tecnica','modelo','calidad','especificidad','prompt','output','notas','tags'];
+  const rows=data.map(d=>headers.map(h=>{const v=h==='tags'?(d.tags||[]).join(';'):(d[h]||'');return `"${String(v).replace(/"/g,'""')}"`;}).join(','));
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,'+encodeURIComponent([headers.join(','),...rows].join('\n'));
+  a.download='portafolio_prompts.csv';a.click();
+}
+
+// ── INSIGHTS ──────────────────────────────────────────────
+function renderInsights(){
+  const data=loadData();
+  const ic=document.getElementById('insights-content');
+  if(data.length<2){ic.innerHTML=`<div class="empty">Agrega al menos 2 prompts para ver insights.</div>`;return;}
+  const group=key=>{const g={};data.forEach(d=>{const k=d[key]||'sin datos';if(!g[k])g[k]=[];g[k].push(d);});return g;};
+  const avgQ=arr=>{const f=arr.filter(d=>d.calidad);return f.length?(f.reduce((a,b)=>a+b.calidad,0)/f.length).toFixed(1):'–';};
+  const barSection=(title,byGroup,colorFn,labelFn)=>`
+    <div class="card" style="margin-bottom:12px">
+      <div style="font-size:14px;font-weight:500;margin-bottom:14px;color:var(--text)">${title}</div>
+      ${Object.entries(byGroup).map(([key,arr])=>{const q=parseFloat(avgQ(arr))||0;return `<div style="margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;font-size:13px;font-family:monospace">
+          <span style="color:var(--text)">${labelFn?labelFn(key):key}</span>
+          <span style="color:var(--text2)">${avgQ(arr)}/5 · ${arr.length} prompt${arr.length>1?'s':''}</span>
+        </div>
+        <div class="insight-bar"><div class="insight-fill" style="width:${q*20}%;background:${colorFn(q)}"></div></div>
+      </div>`;}).join('')}
+    </div>`;
+  const allTags=data.flatMap(d=>d.tags||[]);
+  const tagFreq={};allTags.forEach(t=>tagFreq[t]=(tagFreq[t]||0)+1);
+  const topTags=Object.entries(tagFreq).sort((a,b)=>b[1]-a[1]).slice(0,6);
+  ic.innerHTML=
+    barSection('Calidad promedio por técnica',group('tecnica'),q=>q>=4?'var(--green)':q>=3?'var(--amber)':'var(--red)',k=>tecNames[k]||k)+
+    barSection('Calidad promedio por modelo',group('modelo'),q=>q>=4?'#185FA5':q>=3?'var(--amber)':'var(--red)',k=>modelNames[k]||k)+
+    barSection('Distribución por categoría',group('categoria'),()=>'#534AB7')+
+    (topTags.length?`<div class="card"><div style="font-size:14px;font-weight:500;margin-bottom:10px;color:var(--text)">Tags más frecuentes</div><div class="tag-list">${topTags.map(([t,n])=>`<span class="badge badge-purple">#${t} <span style="opacity:0.6">${n}</span></span>`).join('')}</div></div>`:'');
+}
+
+// ── ASISTENTE IA ──────────────────────────────────────────
+function saveApiKey(){
+  const key=document.getElementById('api-key-input').value.trim();
+  if(!key.startsWith('sk-ant-')){alert('La key debe empezar con sk-ant-');return;}
+  localStorage.setItem(API_KEY_STORAGE,key);
+  initAsistente();
+}
+function clearApiKey(){localStorage.removeItem(API_KEY_STORAGE);aiMessages=[];initAsistente();}
+
+function initAsistente(){
+  const key=localStorage.getItem(API_KEY_STORAGE);
+  document.getElementById('api-key-section').style.display=key?'none':'block';
+  document.getElementById('asistente-ui').style.display=key?'block':'none';
+  if(key&&aiMessages.length===0)renderAiHistory();
+}
+
+function buildSystemPrompt(){
+  const data=loadData();
+  if(!data.length)return`Eres un experto en prompting para IA. El usuario aún no tiene prompts guardados. Ayúdalo a empezar.`;
+  const avg=arr=>arr.length?(arr.reduce((a,b)=>a+b,0)/arr.length).toFixed(1):'–';
+  const group=key=>{const g={};data.forEach(d=>{const k=d[key]||'sin datos';if(!g[k])g[k]=[];g[k].push(d);});return g;};
+  const avgQ=arr=>{const f=arr.filter(d=>d.calidad);return f.length?(f.reduce((a,b)=>a+b.calidad,0)/f.length).toFixed(1):'–';};
+  const byTec=group('tecnica');const byMod=group('modelo');
+  const tecStats=Object.entries(byTec).map(([k,v])=>`${tecNames[k]||k}: ${avgQ(v)}/5 (${v.length})`).join(', ');
+  const modStats=Object.entries(byMod).map(([k,v])=>`${modelNames[k]||k}: ${avgQ(v)}/5 (${v.length})`).join(', ');
+  const recent=data.slice(0,5).map((e,i)=>`
+  [${i+1}] "${e.titulo}" | ${tecNames[e.tecnica]||e.tecnica} | ${modelNames[e.modelo]||e.modelo||'–'} | Calidad:${e.calidad||'–'}/5 Especificidad:${e.especificidad||'–'}/5
+  Prompt: ${e.prompt.slice(0,200)}${e.prompt.length>200?'…':''}
+  Output: ${e.output?e.output.slice(0,150)+'…':'no registrado'}
+  Notas: ${e.notas||'ninguna'}`).join('\n');
+  return`Eres un experto en prompting y diseño de prompts para IA. Analizas el historial del usuario y le ayudas a mejorar resultados, identificar patrones y predecir qué técnicas dan outputs más estables.
+
+PORTAFOLIO:
+- Total: ${data.length} prompts
+- Calidad promedio: ${avg(data.map(d=>d.calidad).filter(Boolean))}/5
+- Especificidad promedio: ${avg(data.map(d=>d.especificidad).filter(Boolean))}/5
+- Por técnica: ${tecStats}
+- Por modelo: ${modStats}
+
+PROMPTS RECIENTES:
+${recent}
+
+INSTRUCCIONES: Responde en español. Sé específico y accionable. Cuando sugieras mejoras, muestra el prompt mejorado completo. Cita datos concretos. Máximo 4 párrafos salvo que sea una sugerencia de prompt.`;
+}
+
+function renderAiHistory(){
+  const hist=document.getElementById('ai-history');
+  if(!aiMessages.length){hist.innerHTML=`<div style="font-size:13px;color:var(--text2);font-family:monospace;padding:8px 0">Tengo acceso a todo tu portafolio. Pregúntame o usa los accesos rápidos arriba.</div>`;return;}
+  hist.innerHTML=aiMessages.map(m=>`<div class="ai-msg ${m.role} ${m.loading?'loading':''}">${m.content}</div>`).join('');
+  hist.scrollTop=hist.scrollHeight;
+}
+
+const quickPrompts={
+  'analiza':'Analiza mis patrones de prompting. ¿Qué tendencias ves? ¿Qué hago bien y qué debo mejorar?',
+  'mejor-tecnica':'¿Qué técnica me da mejores resultados según mis datos? Dame ejemplos concretos.',
+  'siguiente':'Basándote en mis prompts anteriores, sugiéreme cómo construir mi próximo prompt. Dame una plantilla concreta.',
+  'debilidades':'¿Cuáles son las debilidades más comunes en mis prompts? Muéstramelo con ejemplos y cómo corregirlas.',
+  'modelo':'¿Qué modelo me da mejores resultados? ¿Para qué tipo de tareas debería usar cada uno?'
+};
+
+function askQuick(type){const q=quickPrompts[type];if(q){document.getElementById('ai-input').value=q;sendAI();}}
+
+async function sendAI(){
+  const input=document.getElementById('ai-input');
+  const userMsg=input.value.trim();
+  if(!userMsg)return;
+  const key=localStorage.getItem(API_KEY_STORAGE);
+  if(!key)return;
+  input.value='';
+  const sendBtn=document.getElementById('ai-send-btn');
+  sendBtn.disabled=true;
+  aiMessages.push({role:'user',content:userMsg});
+  aiMessages.push({role:'assistant',content:'Analizando tu portafolio...',loading:true});
+  renderAiHistory();
+  try{
+    const messages=aiMessages.filter(m=>!m.loading).map(m=>({role:m.role,content:m.content}));
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:buildSystemPrompt(),messages})
+    });
+    const data=await res.json();
+    aiMessages.pop();
+    if(data.error){aiMessages.push({role:'assistant',content:`Error: ${data.error.message}`,loading:false});}
+    else{const text=data.content?.find(b=>b.type==='text')?.text||'Sin respuesta';aiMessages.push({role:'assistant',content:text,loading:false});}
+  }catch(e){
+    aiMessages.pop();
+    aiMessages.push({role:'assistant',content:`Error de conexión: ${e.message}`,loading:false});
+  }
+  sendBtn.disabled=false;
+  renderAiHistory();
+}
+
+initAsistente();
+</script>
+</body>
+</html>
